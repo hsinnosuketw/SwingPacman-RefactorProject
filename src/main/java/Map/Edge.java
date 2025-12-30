@@ -19,13 +19,18 @@ public class Edge {
     private EOrientation orientation;
     
     private ConcurrentLinkedQueue<Food> food =  new ConcurrentLinkedQueue<>();
+    private Game.GameState gamestate;
+    private Painter.Painter painter;
     
     /**
      * Initializes an Edge object.
      * @param from the starting Node
      * @param to the end Node
+     * @param gamestate the GameState object
      */
-    public Edge(Node from, Node to) {
+    public Edge(Node from, Node to, Game.GameState gamestate) {
+        this.gamestate = gamestate;
+        this.painter = gamestate.getPainter();
     
         boolean switch_nodes =  false;
         if (from.getX() == to.getX()) {
@@ -76,9 +81,9 @@ public class Edge {
         for(int i = offset; i <= length-offset; i+=food_distancing) {
             Food f;
             if (r.nextInt(100) < (int)Settings.get(EParam.special_food_spawn_odd)){
-                f = new LargeFood(minX,minY,this);
+                f = new LargeFood(minX,minY,this, gamestate);
             } else {
-                f = new SmallFood(minX,minY,this);
+                f = new SmallFood(minX,minY,this, gamestate);
             }
             switch(orientation) {
                 case VERTICAL:
@@ -91,7 +96,7 @@ public class Edge {
             food.add(f);
         }
         for (Food f: food) {
-            Game.Game.painter().registerSprite(f);
+            painter.registerSprite(f);
         }
     }
     

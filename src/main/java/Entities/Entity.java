@@ -10,6 +10,7 @@ public class Entity extends Sprite {
     
     private Edge currEdge;
     private boolean colliding = true;
+    protected Game.GameState gamestate;
     
     /**
      * Initializes an Entity object.
@@ -18,10 +19,12 @@ public class Entity extends Sprite {
      * @param y  the y coordinate of the Sprite
      * @param en the EImage ENUM for the image
      * @param currEdge the Edge in which the Entity is located at
+     * @param gamestate the GameState object
      */
-    public Entity(int x, int y, EImage en, Edge currEdge) {
+    public Entity(int x, int y, EImage en, Edge currEdge, Game.GameState gamestate) {
         super(x, y, en);
         this.currEdge=currEdge;
+        this.gamestate = gamestate;
     
         getInitialAnimationFrame();
     }
@@ -34,6 +37,13 @@ public class Entity extends Sprite {
     
     }
     
+    /**
+     * Resolves collisions with other entities using Double Dispatch or specific logic.
+     */
+    public void resolveCollisions() {
+        // Intentionally empty, to be overridden by subclasses
+    }
+
     ///////////////////
     // Setters and getters below
     
@@ -52,5 +62,9 @@ public class Entity extends Sprite {
     
     public boolean isColliding() {
         return colliding;
+    }
+    
+    public void removeSprite() {
+        gamestate.getPainter().unregisterSprite(this);
     }
 }

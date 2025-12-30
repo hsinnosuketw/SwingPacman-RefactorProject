@@ -5,6 +5,7 @@ import Map.EDirection;
 import Map.Edge;
 import Map.Node;
 import Media.EImage;
+import Game.GameState;
 
 import java.util.LinkedList;
 
@@ -13,20 +14,20 @@ import java.util.LinkedList;
  */
 public class MovingEntity extends Entity {
     
-    private int speed;
-    private EDirection direction;
+    protected EDirection direction;
+    protected int speed;
     protected LinkedList<EDirection> turnQueue = new LinkedList<>();
-    
-    
+
     /**
      * Initializes a MovingEntity object.
      * @param en the image of the MovingEntity
      * @param location the Edge where the entity is located
      * @param direction the initial direction of the MovingEntity
      * @param speed the speed of the MovingEntity
+     * @param gamestate the GameState object
      */
-    public MovingEntity(EImage en, Edge location, EDirection direction, int speed){
-        super(location.getFrom().getX(), location.getFrom().getY(), en, location);
+    public MovingEntity(EImage en, Edge location, EDirection direction, int speed, Game.GameState gamestate){
+        super(location.getFrom().getX(), location.getFrom().getY(), en, location, gamestate);
         
         this.direction = direction;
         this.speed = speed;
@@ -40,7 +41,7 @@ public class MovingEntity extends Entity {
     public void step() {
         // Move along the edge if hes not at the end,
         // otherwise, call makeTurn();
-        EntityManager.checkCollisions(this);
+        EntityManager.checkCollisions(this); // Is this still needing GameState? Yes but it takes Entity.
         
         if (getCurrEdge().isAtExtremes(this)){
             makeTurn(getCurrEdge().getExtreme(this));
@@ -110,5 +111,9 @@ public class MovingEntity extends Entity {
 
     public void setSpeed(int speed) {
         this.speed = speed;
+    }
+    
+    public Game.GameState getGameState() {
+        return gamestate;
     }
 }

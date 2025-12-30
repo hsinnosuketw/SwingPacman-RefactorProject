@@ -16,9 +16,10 @@ public class Food extends Entity{
      * @param en the image for the Food Sprite
      * @param currEdge the current edge location of the Food
      * @param points the Food's worth in points
+     * @param gamestate the GameState object
      */
-    public Food(int x, int y, EImage en, Edge currEdge, int points){
-        super(x, y, en, currEdge);
+    public Food(int x, int y, EImage en, Edge currEdge, int points, Game.GameState gamestate){
+        super(x, y, en, currEdge, gamestate);
         this.points = points;
     }
     

@@ -27,7 +27,7 @@ public class Painter {
     
     private ScoreJLabel scoreHUD;
     private LivesJPanel livesHUD;
-    private static RoundJLabel roundHUD;
+    private RoundJLabel roundHUD;
     
     /**
      * Initializes the Painter object by creating and setting the game window.
@@ -135,7 +135,7 @@ public class Painter {
     }
     public void updateLivesPanel(int newLives) { livesHUD.updateLives(newLives);}
     public void updateRoundPanel(int newRound) { roundHUD.updateRound(newRound);}
-    public static RoundJLabel getRoundHUD() { return roundHUD; }
+    public RoundJLabel getRoundHUD() { return roundHUD; }
     
     public JLayeredPane getGamepanel(){
         return gamepanel;

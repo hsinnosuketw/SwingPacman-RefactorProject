@@ -14,9 +14,10 @@ public class TeleportEdge extends Edge {
      * Initializes a TeleportEdge object.
      * @param from the starting Node
      * @param to the end Node
+     * @param gamestate the GameState object
      */
-    public TeleportEdge(Node from, Node to) {
-        super(from,to);
+    public TeleportEdge(Node from, Node to, Game.GameState gamestate) {
+        super(from,to, gamestate);
         setLength(0);
     }
     

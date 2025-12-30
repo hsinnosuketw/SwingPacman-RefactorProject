@@ -15,14 +15,22 @@ public class GameInputManager implements KeyListener {
     
     private HashMap<Integer, EDirection> key_direction_mapping = new HashMap<>();
     
-    /**
-     * Initializes the GameInputManager object.
-     */
+    private GameState gamestate;
+    private GameThread gamethread;
+    
     public GameInputManager() {
         key_direction_mapping.put((int)Settings.get(EParam.KEY_turn_down),EDirection.DOWN);
         key_direction_mapping.put((int)Settings.get(EParam.KEY_turn_up),EDirection.UP);
         key_direction_mapping.put((int)Settings.get(EParam.KEY_turn_left),EDirection.LEFT);
         key_direction_mapping.put((int)Settings.get(EParam.KEY_turn_right),EDirection.RIGHT);
+    }
+
+    public void setGameState(GameState gamestate) {
+        this.gamestate = gamestate;
+    }
+
+    public void setGameThread(GameThread gamethread) {
+        this.gamethread = gamethread;
     }
     
     public void keyTyped(KeyEvent e) {
@@ -35,15 +43,15 @@ public class GameInputManager implements KeyListener {
      */
     public void keyPressed(KeyEvent e) {
         if (key_direction_mapping.containsKey(e.getKeyCode())) {
-            Game.gamestate().getPacman().addTurn(key_direction_mapping.get(e.getKeyCode()));
+            gamestate.getPacman().addTurn(key_direction_mapping.get(e.getKeyCode()));
             return;
         }
         
         if (e.getKeyChar() == 'p') {
-            Game.gamethread().pause();
+            gamethread.pause();
         }
         if (e.getKeyChar() == 'u') {
-            Game.gamethread().unpause();
+            gamethread.unpause();
         }
     }
     

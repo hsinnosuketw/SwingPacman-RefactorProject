@@ -1,6 +1,8 @@
 package Map;
 
 import Painter.Scaler;
+import Painter.Painter;
+import Game.GameState;
 import Settings.EParam;
 import Settings.Settings;
 
@@ -15,10 +17,16 @@ public class Map extends JPanel {
     private ArrayList<Edge> edges;
     private ArrayList<Node> nodes;
     
+    private Painter painter;
+    private GameState gamestate;
+
     /**
      * Initializes a Map object.
+     * @param gamestate the GameState object
      */
-    public Map() {
+    public Map(GameState gamestate) {
+        this.gamestate = gamestate;
+        this.painter = gamestate.getPainter();
         createMap();
         setBounds(0,0,Scaler.getNewSize(),Scaler.getNewSize());
         setOpaque(false);
@@ -99,7 +107,7 @@ public class Map extends JPanel {
         if (!nodes.contains(to))
             nodes.add(to);
         
-        Edge edge = new Edge(from, to);
+        Edge edge = new Edge(from, to, gamestate);
         from.setEdge(edge, fromDirection);
         to.setEdge(edge, toDirection);
         edges.add(edge);
@@ -118,7 +126,7 @@ public class Map extends JPanel {
         if (!nodes.contains(to))
             nodes.add(to);
         
-        TeleportEdge edge = new TeleportEdge(from, to);
+        TeleportEdge edge = new TeleportEdge(from, to, gamestate);
         from.setEdge(edge, fromDirection);
         to.setEdge(edge, toDirection);
         edges.add(edge);

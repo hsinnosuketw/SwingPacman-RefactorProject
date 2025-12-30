@@ -79,13 +79,13 @@ public class Settings {
      */
     static public void rescaleSettings(double scalefactor) {
         //setDefaultSettings();
-        mapping.put(EParam.pacman_speed,    (int)((double)mapping.get(EParam.pacman_speed)*scalefactor));
-        mapping.put(EParam.ghost_speed,     (int)((double)mapping.get(EParam.ghost_speed)*scalefactor));
-        mapping.put(EParam.ghost_vuln_speed,(int)((double)mapping.get(EParam.ghost_vuln_speed)*scalefactor));
-        mapping.put(EParam.food_distancing, (int)((int)mapping.get(EParam.food_distancing)*scalefactor));
-        mapping.put(EParam.line_thickness,  (int)((int)mapping.get(EParam.line_thickness)*scalefactor));
-        mapping.put(EParam.path_width,      (int)((int)mapping.get(EParam.path_width)*scalefactor));
-        mapping.put(EParam.label_size,      (int)((int)mapping.get(EParam.label_size)*scalefactor));
+        mapping.put(EParam.pacman_speed,    (int)(((Number)mapping.get(EParam.pacman_speed)).doubleValue()*scalefactor));
+        mapping.put(EParam.ghost_speed,     (int)(((Number)mapping.get(EParam.ghost_speed)).doubleValue()*scalefactor));
+        mapping.put(EParam.ghost_vuln_speed,(int)(((Number)mapping.get(EParam.ghost_vuln_speed)).doubleValue()*scalefactor));
+        mapping.put(EParam.food_distancing, (int)(((Number)mapping.get(EParam.food_distancing)).intValue()*scalefactor));
+        mapping.put(EParam.line_thickness,  (int)(((Number)mapping.get(EParam.line_thickness)).intValue()*scalefactor));
+        mapping.put(EParam.path_width,      (int)(((Number)mapping.get(EParam.path_width)).intValue()*scalefactor));
+        mapping.put(EParam.label_size,      (int)(((Number)mapping.get(EParam.label_size)).intValue()*scalefactor));
     }
     
     /**

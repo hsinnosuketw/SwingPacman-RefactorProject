@@ -51,7 +51,7 @@ public class Sprite extends JPanel {
      * Handles the complete deletion and removal of this Sprite from the game.
      */
     public void removeSprite() {
-        Game.painter().unregisterSprite(this);
+        // Game.painter().unregisterSprite(this);
     }
     
     /////////////////////////////

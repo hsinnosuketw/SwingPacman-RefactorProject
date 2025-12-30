@@ -5,7 +5,6 @@ import AudioEngine.FunctionCallback;
 import AudioEngine.PlaybackMode;
 import Entities.Ghost;
 import Media.EAudio;
-import Painter.Painter;
 
 import java.util.ArrayList;
 
@@ -17,6 +16,16 @@ public class GameThread implements Runnable {
     private static boolean paused = false;
     private static boolean stepping = true;
     
+    private GameState gamestate;
+    
+    /**
+     * Initializes the GameThread object.
+     * @param gamestate the GameState object to manage entity state
+     */
+    public GameThread(GameState gamestate) {
+        this.gamestate = gamestate;
+    }
+
     @Override
     public void run() {
         try{
@@ -50,13 +59,13 @@ public class GameThread implements Runnable {
      * Handles what happens on a new round sequence.
      */
     public void performRoundIntro() {
-        Painter.getRoundHUD().getBlinkAnimator().start();
+        gamestate.getPainter().getRoundHUD().getBlinkAnimator().start();
         freezeEntities();
         AudioEngine.play(EAudio.round_start, PlaybackMode.regular, new FunctionCallback() {
             @Override
             public void callback() {
                 System.out.println("Finished round start");
-                Painter.getRoundHUD().getBlinkAnimator().stop();
+                gamestate.getPainter().getRoundHUD().getBlinkAnimator().stop();
                 unfreezeEntities();
             }
         });
@@ -72,7 +81,7 @@ public class GameThread implements Runnable {
             @Override
             public void callback() {
                 System.out.println("Finished death sound");
-                Game.gamestate().reshuffleEntityPositions();
+                gamestate.reshuffleEntityPositions();
                 performRoundIntro();
             }
         });
@@ -82,11 +91,11 @@ public class GameThread implements Runnable {
      * Gathers all the MovingEntities and makes them step.
      */
     protected void stepEntities(){
-        ArrayList<Ghost> entities = Game.gamestate().getGhosts();
+        ArrayList<Ghost> entities = gamestate.getGhosts();
         for (Ghost g : entities){
             g.step();
         }
-        Game.gamestate().getPacman().step();
+        gamestate.getPacman().step();
     }
     
     /**

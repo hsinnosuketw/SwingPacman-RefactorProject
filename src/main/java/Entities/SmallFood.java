@@ -10,8 +10,8 @@ import Settings.Settings;
  */
 public class SmallFood extends Food{
     
-    public SmallFood(int x, int y, Edge currEdge){
-        super(x, y, EImage.small_food, currEdge, (int)Settings.get(EParam.small_food_score));
+    public SmallFood(int x, int y, Edge currEdge, Game.GameState gamestate){
+        super(x, y, EImage.small_food, currEdge, (int)Settings.get(EParam.small_food_score), gamestate);
     }
     
     @Override

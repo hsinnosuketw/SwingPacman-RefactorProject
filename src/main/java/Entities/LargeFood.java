@@ -10,8 +10,8 @@ import Settings.EParam;
 import Settings.Settings;
 
 public class LargeFood extends Food {
-    public LargeFood(int x, int y, Edge currEdge){
-        super(x, y, EImage.large_food, currEdge, (int)Settings.get(EParam.large_food_score));
+    public LargeFood(int x, int y, Edge currEdge, Game.GameState gamestate){
+        super(x, y, EImage.large_food, currEdge, (int)Settings.get(EParam.large_food_score), gamestate);
     }
 
     @Override
@@ -20,7 +20,7 @@ public class LargeFood extends Food {
         
         AudioEngine.playIfNotAlready(EAudio.large_food, PlaybackMode.regular, null);
         
-        EntityManager.makeGhostVulnerable(true);
+        gamestate.makeGhostsVulnerable(true);
         
         AudioEngine.stop(EAudio.ghost_vulnerable_end);
         AudioEngine.restartOrPlay(EAudio.ghost_vulnerable, PlaybackMode.regular, new FunctionCallback() {
@@ -31,7 +31,7 @@ public class LargeFood extends Food {
                     @Override
                     public void callback() {
                         System.out.println("Finished ghost vulnerability");
-                        EntityManager.makeGhostVulnerable(false);
+                        gamestate.makeGhostsVulnerable(false);
                     }
                 });
                 

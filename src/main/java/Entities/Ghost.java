@@ -1,7 +1,7 @@
 package Entities;
 
 import AnimationEngine.BlinkAnimator;
-import Game.Game;
+import Game.GameState;
 import Map.EDirection;
 import Map.Edge;
 import Map.Node;
@@ -19,10 +19,11 @@ import java.util.Random;
 /**
  * An enemy Ghost.
  */
-public class Ghost extends MovingEntity {
+public abstract class Ghost extends MovingEntity {
     
     EGhostType type;
-    private static boolean vulnerable = false;
+    // Converted to instance field for better testing and encapsulation
+    private boolean vulnerable = false;
     
     private LinkedList<EDirection> priorityQueue = new LinkedList<>();
     
@@ -31,9 +32,10 @@ public class Ghost extends MovingEntity {
     /**
      * Initializes a Ghost object.
      * @param location the Edge where the ghost is located.
+     * @param gamestate the GameState object
      */
-    public Ghost(Edge location, EGhostType ghost) {
-        super(null, location, EDirection.DOWN, (int)Settings.get(EParam.ghost_speed));
+    public Ghost(Edge location, EGhostType ghost, GameState gamestate) {
+        super(EImage.ghost1_left, location, EDirection.DOWN, (int)Settings.get(EParam.ghost_speed), gamestate);
         type = ghost;
         
         // Chooses the respective image for the ghost
@@ -48,7 +50,7 @@ public class Ghost extends MovingEntity {
     @Override
     public void removeSprite() {
         super.removeSprite();
-        Game.gamestate().removeGhost(this);
+        gamestate.removeGhost(this);
     }
     
     /**
@@ -58,6 +60,16 @@ public class Ghost extends MovingEntity {
     @Override
     public void onCollision(Entity e) {
     
+    }
+    
+    @Override
+    public void resolveCollisions() {
+        // Handle collisions with Pacman
+        Pacman p = gamestate.getPacman();
+        if (p != null && EntityManager.areColliding(this, p)) {
+            p.onCollision(this);
+            this.onCollision(p);
+        }
     }
     
     @Override
@@ -146,24 +158,10 @@ public class Ghost extends MovingEntity {
     /**
      * Sets the Ghost image accordingly to the type of the ghost
      */
-    public void resetGhostImg() {
-        EImage img;
-        switch(type) {
-            case ghost1:
-                img = EImage.ghost1_left;
-                break;
-            case ghost2:
-                img = EImage.ghost2_right;
-                break;
-            case ghost3:
-                img = EImage.ghost3_right;
-                break;
-            default:
-                img = EImage.ghost4_right;
-                break;
-        }
-        setImage(img);
-    }
+    /**
+     * Sets the Ghost image. Subclasses must implement this.
+     */
+    public abstract void resetGhostImg();
     
     ////////////////
     // Setters and getters below
@@ -195,7 +193,7 @@ public class Ghost extends MovingEntity {
         priorityQueue = new LinkedList<>();
     }
     
-    public static boolean isVulnerable(){
+    public boolean isVulnerable(){
         return vulnerable;
     }
 

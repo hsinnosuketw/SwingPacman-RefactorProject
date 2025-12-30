@@ -8,6 +8,14 @@ import Map.Edge;
 import Map.Map;
 import Settings.EParam;
 import Settings.Settings;
+import Entities.RedGhost;
+import Settings.Settings;
+import Entities.OrangeGhost;
+import Entities.CyanGhost;
+import Entities.PinkGhost;
+import Painter.Painter;
+import Game.GameThread;
+import Game.GameThread;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -16,6 +24,8 @@ import java.util.Random;
  * Saves all the valuable stats and data about the game.
  */
 public class GameState {
+    private Painter painter;
+    private GameThread gamethread;
     private Pacman pacman;
     private ArrayList<Ghost> ghosts = new ArrayList<>();
     private Map map;
@@ -25,10 +35,15 @@ public class GameState {
     /**
      * Initializes the GameState object.
      */
-    public GameState() {
+    /**
+     * Initializes the GameState object.
+     * @param painter the Painter object
+     */
+    public GameState(Painter painter) {
+        this.painter = painter;
         
         // Initializes the Map.
-        map = new Map();
+        map = new Map(this);
         
         
         // Creates the Ghosts
@@ -39,27 +54,27 @@ public class GameState {
             Ghost g;
             switch(i%4) {
                 case 0:
-                    g = new Ghost(edges.get(rand.nextInt(edges.size())), EGhostType.ghost4);
+                    g = new OrangeGhost(edges.get(rand.nextInt(edges.size())), this);
                     break;
                 case 1:
-                    g = new Ghost(edges.get(rand.nextInt(edges.size())), EGhostType.ghost1);
+                    g = new RedGhost(edges.get(rand.nextInt(edges.size())), this);
                     break;
                 case 2:
-                    g = new Ghost(edges.get(rand.nextInt(edges.size())), EGhostType.ghost2);
+                    g = new PinkGhost(edges.get(rand.nextInt(edges.size())), this);
                     break;
                 default: // 3
-                    g = new Ghost(edges.get(rand.nextInt(edges.size())), EGhostType.ghost3);
+                    g = new CyanGhost(edges.get(rand.nextInt(edges.size())), this);
                     break;
             }
             ghosts.add(g);
             
-            Game.painter().registerSprite(g);
+            painter.registerSprite(g);
         }
     
         // Prevents Pacman to spawn at the same position as a Ghost
         boolean valid = false;
         while(!valid) {
-            pacman = new Pacman(edges.get(rand.nextInt(edges.size())));
+            pacman = new Pacman(edges.get(rand.nextInt(edges.size())), this);
         
             valid = true;
             for(Ghost g : ghosts) {
@@ -69,7 +84,7 @@ public class GameState {
                 }
             }
         }
-        Game.painter().registerSprite(pacman);
+        painter.registerSprite(pacman);
     }
     
     /**
@@ -123,7 +138,7 @@ public class GameState {
     }
     public void setRound(int round){
         this.round = round;
-        Game.painter().updateRoundPanel(round);
+        painter.updateRoundPanel(round);
     }
     
     public ArrayList<Ghost> getGhosts(){
@@ -135,4 +150,26 @@ public class GameState {
     }
 
     public int getRound() {return round; }
+    
+    /**
+     * Makes all the Ghosts of the game vulnerable or not.
+     * @param toVulnearble the new vulnerable value of the Ghosts
+     */
+    public void makeGhostsVulnerable(boolean toVulnearble) {
+        for (Ghost g : ghosts) {
+            g.setVulnerable(toVulnearble);
+        }
+    }
+    
+    public Painter getPainter() {
+        return painter;
+    }
+
+    public void setGameThread(GameThread gamethread) {
+        this.gamethread = gamethread;
+    }
+
+    public GameThread getGameThread() {
+        return gamethread;
+    }
 }

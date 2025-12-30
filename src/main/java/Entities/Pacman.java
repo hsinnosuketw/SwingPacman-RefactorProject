@@ -3,7 +3,7 @@ package Entities;
 import AudioEngine.AudioEngine;
 import AudioEngine.FunctionCallback;
 import AudioEngine.PlaybackMode;
-import Game.Game;
+import Game.GameState;
 import Map.EDirection;
 import Map.Edge;
 import Media.EAudio;
@@ -26,8 +26,8 @@ public class Pacman extends MovingEntity{
      * Initializes a Pacman object.
      * @param location the Edge where the pacman is located.
      */
-    public Pacman(Edge location){
-        super(null, location, null, (int)Settings.get(EParam.pacman_speed));
+    public Pacman(Edge location, GameState gamestate){
+        super(null, location, null, (int)Settings.get(EParam.pacman_speed), gamestate);
         setLives((int)Settings.get(EParam.pacman_starting_lives));
     }
     
@@ -37,7 +37,7 @@ public class Pacman extends MovingEntity{
     @Override
     public void removeSprite() {
         super.removeSprite();
-        Game.gamestate().removePacman(this);
+        gamestate.removePacman(this);
     }
     
     /**
@@ -49,17 +49,17 @@ public class Pacman extends MovingEntity{
         if (e instanceof Ghost) {
             if (!((Ghost)e).isVulnerable()) {
                 if (lives > 1) {
-                    Game.gamethread().performDeathSequence();
+                    gamestate.getGameThread().performDeathSequence();
                     setLives(lives - 1);
-                    Game.gamestate().setRound(Game.gamestate().getRound() + 1);
+                    gamestate.setRound(gamestate.getRound() + 1);
                     System.out.println(lives);
                 }
                 else {
-                    Game.gameOver();
+                    gamestate.getGameThread().gameOver();
                 }
             } else {
                 // TODO: Not completely implementing the printing of the increased score above Pacmans head
-                Game.gamethread().freezeEntities();
+                gamestate.getGameThread().freezeEntities();
                 JLabel label = new JLabel("1000");
                 label.setForeground(Color.red);
                 label.setFont(new Font("Serif", Font.BOLD, 35));
@@ -68,7 +68,7 @@ public class Pacman extends MovingEntity{
                     @Override
                     public void callback(){
                         e.remove(label);
-                        Game.gamethread().unfreezeEntities();
+                        gamestate.getGameThread().unfreezeEntities();
                     }
                 });
                 ((Ghost) e).die();
@@ -76,11 +76,22 @@ public class Pacman extends MovingEntity{
             }
         }else if(e instanceof Food) {
             score += ((Food) e).getPoints();
-            Game.painter().updateScoreLabel(score);
+            gamestate.getPainter().updateScoreLabel(score);
             if (e instanceof LargeFood) {
                 AudioEngine.playIfNotAlready(EAudio.large_food, PlaybackMode.regular, null);
             } else{
                 AudioEngine.playIfNotAlready(EAudio.small_food, PlaybackMode.regular,null);
+            }
+        }
+    }
+
+    @Override
+    public void resolveCollisions() {
+        // Handle collisions with Food
+        for (Food f : getCurrEdge().getFood()) {
+            if (EntityManager.areColliding(this, f)) {
+                this.onCollision(f);
+                f.onCollision(this);
             }
         }
     }
@@ -124,6 +135,7 @@ public class Pacman extends MovingEntity{
         // Otherwise adds the turn to the queue
         if (direction != null){
             turnQueue.addFirst(direction);
+            // Limit the queue size to avoid stacking turns
             if (turnQueue.size() > 1) {
                 turnQueue.removeLast();
             }
@@ -139,7 +151,7 @@ public class Pacman extends MovingEntity{
     
     public void setLives(int lives){
         this.lives=lives;
-        Game.painter().updateLivesPanel(lives);
+        gamestate.getPainter().updateLivesPanel(lives);
     }
     
     public void increaseScore(long score) {
@@ -148,6 +160,6 @@ public class Pacman extends MovingEntity{
     
     public void setScore(long score){
         this.score = score;
-        Game.painter().updateScoreLabel(score);
+        gamestate.getPainter().updateScoreLabel(score);
     }
 }
